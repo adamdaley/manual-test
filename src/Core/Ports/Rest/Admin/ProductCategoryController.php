@@ -39,6 +39,7 @@ class ProductCategoryController extends AbstractController
     #[Route('/', name: 'admin_product_category_create', methods: [Request::METHOD_POST])]
     public function create(Request $request): JsonResponse
     {
+        /** @var string $name */
         $name = $request->get('name', '');
 
         $productCategory = $this->commandBus->command(new CreateProductCategoryCommand($name));

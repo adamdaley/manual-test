@@ -16,7 +16,7 @@ Given more time I would have improved the following:
 - Improved error handling with proper HTTP response codes
 - Added Logging
 - Add a bff to get the responses from the product category and questionnaire apis
-- Add phpcs and phpstan
+- Add phpcs
 - Add a docker-compose file
 
 Requirements
@@ -88,6 +88,13 @@ Execute this command to run tests:
 ```bash
 cd adamdaley_manual_test/
 ./bin/phpunit
+```
+
+Execute this command to run static analysis:
+
+```bash
+cd adamdaley_manual_test/
+./vendor/phpstan/phpstan/phpstan
 ```
 
 

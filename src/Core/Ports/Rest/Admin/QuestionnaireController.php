@@ -21,7 +21,7 @@ use Symfony\Component\Uid\UuidV7;
 class QuestionnaireController extends AbstractController
 {
     public function __construct(
-        private readonly QueryBus $queryBus,
+//        private readonly QueryBus $queryBus,
         private readonly CommandBus $commandBus,
     ) {
     }
@@ -30,7 +30,11 @@ class QuestionnaireController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         // todo request mapping
-        $productCategoryId = UuidV7::fromString($request->get('productCategoryId', ''));
+        /** @var string $productCategoryIdString */
+        $productCategoryIdString = $request->get('productCategoryId', '');
+        $productCategoryId = UuidV7::fromString($productCategoryIdString);
+
+        /** @var string $title */
         $title = $request->get('title', '');
 
         $questionnaire = $this->commandBus->command(new CreateQuestionnaireCommand($productCategoryId, $title));

@@ -27,28 +27,33 @@ final class DomainEventSubscriber implements EventSubscriber
 
     public function getSubscribedEvents(): array
     {
+        // todo could probably simplify this to just postFlush
+
         return [
-//            Events::postPersist,
-//            Events::postUpdate,
-//            Events::postRemove,
+            Events::postPersist,
+            Events::postUpdate,
+            Events::postRemove,
             Events::postFlush,
         ];
     }
-//
-//    public function postPersist(LifecycleEventArgs $args): void
-//    {
-//        $this->keepAggregateRoots($args);
-//    }
-//
-//    public function postUpdate(LifecycleEventArgs $args): void
-//    {
-//        $this->keepAggregateRoots($args);
-//    }
-//
-//    public function postRemove(LifecycleEventArgs $args): void
-//    {
-//        $this->keepAggregateRoots($args);
-//    }
+
+    // @phpstan-ignore-next-line
+    public function postPersist(LifecycleEventArgs $args): void
+    {
+        $this->keepAggregateRoots($args);
+    }
+
+    // @phpstan-ignore-next-line
+    public function postUpdate(LifecycleEventArgs $args): void
+    {
+        $this->keepAggregateRoots($args);
+    }
+
+    // @phpstan-ignore-next-line
+    public function postRemove(LifecycleEventArgs $args): void
+    {
+        $this->keepAggregateRoots($args);
+    }
 
     public function postFlush(PostFlushEventArgs $args): void
     {
@@ -59,6 +64,7 @@ final class DomainEventSubscriber implements EventSubscriber
         }
     }
 
+    // @phpstan-ignore-next-line
     private function keepAggregateRoots(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();

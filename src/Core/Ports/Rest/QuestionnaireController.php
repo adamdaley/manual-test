@@ -25,7 +25,7 @@ class QuestionnaireController extends AbstractController
 {
     public function __construct(
         private QueryBus $queryBus,
-        private CommandBus $commandBus,
+//        private CommandBus $commandBus,
     ) {
     }
 
@@ -47,16 +47,14 @@ class QuestionnaireController extends AbstractController
         return $this->json($questionnaire);
     }
 
-    /**
-     * @param list<UuidV7> $answerIds
-     */
     #[Route('/{id}/recommended-products', name: 'questionnaire_recommended_products', methods: [Request::METHOD_GET])]
     public function recommendedProducts(
 //        #[CurrentUser] User $user,
         UuidV7 $id,
         Request $request,
     ): JsonResponse {
-        $answerIds = $request->get('answerIds');
+        /** @var list<string> $answerIds */
+        $answerIds = $request->get('answerIds', []);
         $answerIds = array_map(fn(string $answerId): UuidV7 => UuidV7::fromString($answerId), $answerIds);
 
         /** @var Questionnaire $questionnaire */

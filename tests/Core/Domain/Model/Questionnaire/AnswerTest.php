@@ -37,7 +37,7 @@ class AnswerTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         // ARRANGE & ACT
-        new Answer($this->question, 'Yes', null, [Uuid::v6()]);
+        new Answer($this->question, 'Yes', null, [Uuid::v6()]); // @phpstan-ignore-line
     }
 
     public function testConstruct_WithValidData_ReturnsAnswerInstance(): void
