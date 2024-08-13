@@ -11,22 +11,34 @@
 
 namespace App\DataFixtures;
 
+use App\Core\Application\Command\ProductCategory\CreateProduct\CreateProductCommand;
+use App\Core\Application\Command\ProductCategory\CreateProductCategory\CreateProductCategoryCommand;
+use App\Core\Application\Command\Questionnaire\CreateAnswer\CreateAnswerCommand;
+use App\Core\Application\Command\Questionnaire\CreateQuestion\CreateQuestionCommand;
+use App\Core\Application\Command\Questionnaire\CreateQuestionnaire\CreateQuestionnaireCommand;
+use App\Core\Domain\Model\ProductCategory\Product;
+use App\Core\Domain\Model\ProductCategory\ProductCategory;
+use App\Core\Domain\Model\Questionnaire\Question;
+use App\Core\Domain\Model\Questionnaire\Questionnaire;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Shared\Infrastructure\MessageBus\CommandBus;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\AbstractUnicodeString;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Uid\Uuid;
 use function Symfony\Component\String\u;
 
 final class AppFixtures extends Fixture
 {
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly SluggerInterface $slugger
+        private readonly SluggerInterface $slugger,
+        private readonly CommandBus $commandBus,
     ) {
     }
 
@@ -35,6 +47,7 @@ final class AppFixtures extends Fixture
         $this->loadUsers($manager);
         $this->loadTags($manager);
         $this->loadPosts($manager);
+        $this->loadQuestionnaires($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
@@ -94,6 +107,81 @@ final class AppFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    private function loadQuestionnaires(ObjectManager $manager): void
+    {
+        /** @var ProductCategory $productCategory */
+        $productCategory = $this->commandBus->command(new CreateProductCategoryCommand('Erectile dysfunction'));
+
+        /** @var Product $sildenafil50 */
+        $sildenafil50 = $this->commandBus->command(new CreateProductCommand($productCategory->id, 'Sildenafil 50mg'));
+        /** @var Product $sildenafil100 */
+        $sildenafil100 = $this->commandBus->command(new CreateProductCommand($productCategory->id, 'Sildenafil 100mg'));
+        /** @var Product $tadalafil10 */
+        $tadalafil10 = $this->commandBus->command(new CreateProductCommand($productCategory->id, 'Tadalafil 10mg'));
+        /** @var Product $tadalafil20 */
+        $tadalafil20 = $this->commandBus->command(new CreateProductCommand($productCategory->id, 'Tadalafil 20mg'));
+
+        $allProductIds = [$sildenafil50->getId(), $sildenafil100->getId(), $tadalafil10->getId(), $tadalafil20->getId()];
+
+        /** @var Questionnaire $questionnaire */
+        $questionnaire = $this->commandBus->command(new CreateQuestionnaireCommand($productCategory->getId(), 'Medical history'));
+
+        /** @var Question $question1 */
+        $question1 = $this->commandBus->command(new CreateQuestionCommand($questionnaire->getId(), '1. Do you have difficulty getting or maintaining an erection?'));
+        /** @var Question $question2 */
+        $question2 = $this->commandBus->command(new CreateQuestionCommand($questionnaire->getId(), '2. Have you tried any of the following treatments before?'));
+        /** @var Question $question2a */
+        $question2a = $this->commandBus->command(new CreateQuestionCommand($questionnaire->getId(), '2a. Was the Viagra or Sildenafil product you tried before effective?'));
+        /** @var Question $question2b */
+        $question2b = $this->commandBus->command(new CreateQuestionCommand($questionnaire->getId(), '2b. Was the Cialis or Tadalafil product you tried before effective?'));
+        /** @var Question $question2c */
+        $question2c = $this->commandBus->command(new CreateQuestionCommand($questionnaire->getId(), '2c. Which is your preferred treatment?'));
+        /** @var Question $question3 */
+        $question3 = $this->commandBus->command(new CreateQuestionCommand($questionnaire->getId(), '3. Do you have, or have you ever had, any heart or neurological conditions?'));
+        /** @var Question $question4 */
+        $question4 = $this->commandBus->command(new CreateQuestionCommand($questionnaire->getId(), '4. Do any of the listed medical conditions apply to you?'));
+        /** @var Question $question5 */
+        $question5 = $this->commandBus->command(new CreateQuestionCommand($questionnaire->getId(), '5. Are you taking any of the following drugs?'));
+
+        $question1Answer1 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question1->getId(), 'Yes', $question2->getId()));
+        $question1Answer2 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question1->getId(), 'No', productIdRestrictions: $allProductIds));
+
+        $question2Answer1 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2->getId(), 'Viagra or Sildenafil', $question2a->getId()));
+        $question2Answer2 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2->getId(), 'Cialis or Tadalafil', $question2b->getId()));
+        $question2Answer3 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2->getId(), 'Both', $question2c->getId()));
+        // todo not sure about this
+        $question2Answer4 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2->getId(), 'None of the above', $question3->getId(), [$sildenafil100->getId(), $tadalafil20->getId()]));
+
+        // todo not sure about this
+        $question2aAnswer1 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2a->getId(), 'Yes', $question3->getId(), [$tadalafil10->getId(), $tadalafil20->getId(), $sildenafil100->getId()]));
+        $question2aAnswer2 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2a->getId(), 'No', $question3->getId(), [$sildenafil50->getId(), $sildenafil100->getId(), $tadalafil10->getId()]));
+
+        // todo not sure about this
+        $question2bAnswer1 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2b->getId(), 'Yes', $question3->getId(), [$sildenafil50->getId(), $sildenafil100->getId(), $tadalafil20->getId()]));
+        $question2bAnswer2 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2b->getId(), 'No', $question3->getId(), [$tadalafil10->getId(), $tadalafil20->getId(), $sildenafil50->getId()]));
+
+        // todo not sure about this
+        $question2cAnswer1 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2c->getId(), 'Viagra or Sildenafil', $question3->getId(), [$tadalafil10->getId(), $tadalafil20->getId(), $sildenafil50->getId()]));
+        $question2cAnswer2 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2c->getId(), 'Cialis or Tadalafil', $question3->getId(), [$sildenafil50->getId(), $sildenafil100->getId(), $tadalafil10->getId()]));
+        $question2cAnswer3 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question2c->getId(), 'None of the above', $question3->getId(), [$sildenafil50->getId(), $tadalafil10->getId()]));
+
+        // todo not sure about this
+        $question3Answer1 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question3->getId(), 'Yes', productIdRestrictions: $allProductIds));
+        $question3Answer2 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question3->getId(), 'No', $question4->getId()));
+
+        $question4Answer1 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question4->getId(), 'Significant liver problems (such as cirrhosis of the liver) or kidney problems', productIdRestrictions: $allProductIds));
+        $question4Answer2 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question4->getId(), 'Currently prescribed GTN, Isosorbide mononitrate, Isosorbide dinitrate , Nicorandil (nitrates) or Rectogesic ointment', productIdRestrictions: $allProductIds));
+        $question4Answer3 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question4->getId(), 'Abnormal blood pressure (lower than 90/50 mmHg or higher than 160/90 mmHg)', productIdRestrictions: $allProductIds));
+        $question4Answer4 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question4->getId(), "Condition affecting your penis (such as Peyronie's Disease, previous injuries or an inability to retract your foreskin)", productIdRestrictions: $allProductIds));
+        $question4Answer5 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question4->getId(), "I don't have any of these conditions", $question5->getId()));
+
+        $question5Answer1 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question5->getId(), 'Alpha-blocker medication such as Alfuzosin, Doxazosin, Tamsulosin, Prazosin, Terazosin or over-the-counter Flomax', productIdRestrictions: $allProductIds));
+        $question5Answer2 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question5->getId(), 'Riociguat or other guanylate cyclase stimulators (for lung problems)', productIdRestrictions: $allProductIds));
+        $question5Answer3 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question5->getId(), 'Saquinavir, Ritonavir or Indinavir (for HIV)', productIdRestrictions: $allProductIds));
+        $question5Answer4 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question5->getId(), 'Cimetidine (for heartburn)', productIdRestrictions: $allProductIds));
+        $question5Answer5 = $this->commandBus->command(new CreateAnswerCommand($questionnaire->id, $question5->getId(), "I don't take any of these drugs"));
     }
 
     /**

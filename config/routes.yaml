@@ -17,3 +17,12 @@ controllers:
     prefix: /{_locale}
     defaults:
         _locale: '%locale%'
+
+core:
+    resource:
+        path: '../src/Core/Ports/Rest/'
+        namespace: App\Core\Ports\Rest
+    type: attribute
+    prefix: /{_locale}
+    defaults:
+        _locale: '%locale%'
