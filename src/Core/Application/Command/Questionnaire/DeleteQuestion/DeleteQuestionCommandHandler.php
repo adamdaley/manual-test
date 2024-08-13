@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Core\Application\Command\Questionnaire\DeleteQuestion;
 
-use App\Core\Application\Command\Questionnaire\DeleteAnswer\DeleteAnswerCommand;
 use App\Core\Domain\Model\Questionnaire\QuestionnaireRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Core\Domain\Model\Questionnaire;
 
-use App\Core\Domain\Model\ProductCategory\ProductCategory;
 use App\Core\Domain\Model\Questionnaire\Exception\AnswerNotFoundException;
 use App\Core\Domain\Model\Questionnaire\Exception\QuestionAnsweredMultipleTimesException;
 use App\Core\Domain\Model\Questionnaire\Exception\QuestionNotAnsweredException;
