@@ -169,7 +169,7 @@ class QuestionTest extends TestCase
         $this->assertSame($this->subject, $result->question);
         $this->assertSame($answerTitle, $result->title);
         $this->assertSame($nextQuestionId, $result->getNextQuestionId());
-        $this->assertSame($productIdRestrictions, $result->getProductIdRestrictions());
+        $this->assertEquals($productIdRestrictions, $result->getProductIdRestrictions());
     }
 
     public function testRemoveAnswer_WithUnknownAnswerId_ThrowsAnswerNotFoundException(): void

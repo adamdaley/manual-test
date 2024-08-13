@@ -21,6 +21,12 @@ class Answer implements EntityInterface, JsonSerializable
     private UuidV7 $id;
 
     /**
+     * @var list<string> $productIdRestrictions
+     */
+    #[Mapping\Column(type: Types::JSON)]
+    private array $productIdRestrictions = [];
+
+    /**
      * @param list<UuidV7> $productIdRestrictions
      */
     public function __construct(
@@ -31,17 +37,16 @@ class Answer implements EntityInterface, JsonSerializable
         public readonly string $title,
         #[Mapping\Column(type: UuidType::NAME, nullable: true)]
         private ?UuidV7 $nextQuestionId = null,
-        #[Mapping\Column(type: Types::JSON)]
-        private array $productIdRestrictions = [],
+        array $productIdRestrictions = [],
     ) {
         if (empty($this->title)) {
             throw new InvalidArgumentException('Answer title cannot be empty.');
         }
 
         if (
-            !empty($this->productIdRestrictions)
+            !empty($productIdRestrictions)
             && array_reduce(
-                $this->productIdRestrictions,
+                $productIdRestrictions,
                 fn(bool $carry, Uuid $productId) => $carry && $productId instanceof UuidV7, true,
             ) === false
         ) {
@@ -49,6 +54,7 @@ class Answer implements EntityInterface, JsonSerializable
         }
 
         $this->id = Uuid::v7();
+        $this->productIdRestrictions = array_map(fn(UuidV7 $productIdRestriction): string => (string) $productIdRestriction, $productIdRestrictions);
     }
 
     public function getId(): UuidV7
@@ -71,8 +77,6 @@ class Answer implements EntityInterface, JsonSerializable
      */
     public function getProductIdRestrictions(): array
     {
-//        return $this->productIdRestrictions;
-
         return array_map(fn(string $productIdRestriction): UuidV7 => UuidV7::fromString($productIdRestriction), $this->productIdRestrictions);
     }
 

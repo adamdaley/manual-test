@@ -55,7 +55,7 @@ class AnswerTest extends TestCase
         $this->assertSame($this->question, $result->question);
         $this->assertSame('Yes', $result->title);
         $this->assertSame($nextQuestionId, $result->getNextQuestionId());
-        $this->assertSame([$productRestrictionId], $result->getProductIdRestrictions());
+        $this->assertEquals([$productRestrictionId], $result->getProductIdRestrictions());
     }
 
     public function testGetId_WithValidData_ReturnsUuidV7(): void
@@ -114,6 +114,6 @@ class AnswerTest extends TestCase
         $this->assertArrayHasKey('nextQuestionId', $result);
         $this->assertSame($nextQuestionId, $result['nextQuestionId']);
         $this->assertArrayHasKey('productIdRestrictions', $result);
-        $this->assertSame([$productRestrictionId], $result['productIdRestrictions']);
+        $this->assertEquals([$productRestrictionId], $result['productIdRestrictions']);
     }
 }

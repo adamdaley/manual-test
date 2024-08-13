@@ -162,7 +162,7 @@ final class QuestionnaireTest extends TestCase
         $this->assertSame($question, $result->question);
         $this->assertSame($answerTitle, $result->title);
         $this->assertSame($nextQuestionId, $result->getNextQuestionId());
-        $this->assertSame($productIdRestrictions, $result->getProductIdRestrictions());
+        $this->assertEquals($productIdRestrictions, $result->getProductIdRestrictions());
     }
 
     public function testRemoveAnswerFromQuestion_WithUnknownQuestionId_ThrowsQuestionNotFoundException(): void
@@ -367,74 +367,74 @@ final class QuestionnaireTest extends TestCase
 
         // q1 - a2
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer2->getId()]);
-        $this->assertSame([$sildenafil50Id, $sildenafil100Id, $tadalafil10Id, $tadalafil20Id], $result);
+        $this->assertEquals([$sildenafil50Id, $sildenafil100Id, $tadalafil10Id, $tadalafil20Id], $result);
 
         // q2 - a1, q2a - a1
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer1->getId(), $question2aAnswer1->getId(), $question3Answer2->getId(), $question4Answer5->getId(), $question5Answer5->getId()]);
-        $this->assertSame([$tadalafil10Id, $tadalafil20Id, $sildenafil100Id], $result);
+        $this->assertEquals([$tadalafil10Id, $tadalafil20Id, $sildenafil100Id], $result);
 
         // q2 - a1, q2a - a2
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer1->getId(), $question2aAnswer2->getId(), $question3Answer2->getId(), $question4Answer5->getId(), $question5Answer5->getId()]);
-        $this->assertSame([$sildenafil50Id, $sildenafil100Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil50Id, $sildenafil100Id, $tadalafil10Id], $result);
 
         // q2 - a2, q2b - a1
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer2->getId(), $question2bAnswer1->getId(), $question3Answer2->getId(), $question4Answer5->getId(), $question5Answer5->getId()]);
-        $this->assertSame([$sildenafil50Id, $sildenafil100Id, $tadalafil20Id], $result);
+        $this->assertEquals([$sildenafil50Id, $sildenafil100Id, $tadalafil20Id], $result);
 
         // q2 - a2, q2b - a2
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer2->getId(), $question2bAnswer2->getId(), $question3Answer2->getId(), $question4Answer5->getId(), $question5Answer5->getId()]);
-        $this->assertSame([$tadalafil10Id, $tadalafil20Id, $sildenafil50Id], $result);
+        $this->assertEquals([$tadalafil10Id, $tadalafil20Id, $sildenafil50Id], $result);
 
         // q2 - a3, q2c - a1
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer3->getId(), $question2cAnswer1->getId(), $question3Answer2->getId(), $question4Answer5->getId(), $question5Answer5->getId()]);
-        $this->assertSame([$tadalafil10Id, $tadalafil20Id, $sildenafil50Id], $result);
+        $this->assertEquals([$tadalafil10Id, $tadalafil20Id, $sildenafil50Id], $result);
 
         // q2 - a3, q2c - a2
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer3->getId(), $question2cAnswer2->getId(), $question3Answer2->getId(), $question4Answer5->getId(), $question5Answer5->getId()]);
-        $this->assertSame([$sildenafil50Id, $sildenafil100Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil50Id, $sildenafil100Id, $tadalafil10Id], $result);
 
         // q2 - a3, q2c - a3
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer3->getId(), $question2cAnswer3->getId(), $question3Answer2->getId(), $question4Answer5->getId(), $question5Answer5->getId()]);
-        $this->assertSame([$sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil50Id, $tadalafil10Id], $result);
 
         // q2 - a4
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer2->getId(), $question4Answer5->getId(), $question5Answer5->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id], $result);
 
         // q3 - a1
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer1->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
 
         // q4 - a1
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer1->getId(), $question4Answer1->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
 
         // q4 - a2
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer1->getId(), $question4Answer2->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
 
         // q4 - a3
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer1->getId(), $question4Answer3->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
 
         // q4 - a4
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer1->getId(), $question4Answer4->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
 
         // q5 - a1
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer1->getId(), $question4Answer5->getId(), $question5Answer1->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
 
         // q5 - a2
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer1->getId(), $question4Answer5->getId(), $question5Answer2->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
 
         // q5 - a3
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer1->getId(), $question4Answer5->getId(), $question5Answer3->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
 
         // q5 - a4
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer1->getId(), $question2Answer4->getId(), $question3Answer1->getId(), $question4Answer5->getId(), $question5Answer4->getId()]);
-        $this->assertSame([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
+        $this->assertEquals([$sildenafil100Id, $tadalafil20Id, $sildenafil50Id, $tadalafil10Id], $result);
     }
 }
