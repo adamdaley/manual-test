@@ -10,11 +10,11 @@ My code can be found in `/src/Core`, `/src/Shared`, `/tests/Core`, `/tests/Share
 I focused most of my efforts on mapping the domain and the associated commands and queries.
 
 Given more time I would have improved the following:
-- Implement domain events
+- Implement an example domain event listener
 - Request validation and parameter mapping
-- Added controller and handler tests
+- Add controller and handler tests
 - Improved error handling with proper HTTP response codes
-- Added Logging
+- Add Logging
 - Add a bff to get the responses from the product category and questionnaire apis
 - Add phpcs
 - Add a docker-compose file
@@ -54,10 +54,11 @@ Login as `jane_admin` with password `kitten`.
 
 For the sake of ease I've already created a product category and questionnaire via the fixtures `/src/DataFixtures/AppFixtures.php`
 
-The product categories can be found [here][4] 
+The product categories can be found [here][4]
+
 The questionnaire can be found [here][5]
 
-Then you can visit this link with the relevant answerIds to see the recommended products.
+Then you can visit `/questionnaire/{id}/recommended-products?answerIds[]=...` with the relevant answerIds to see the recommended products.
 
 Example 1:
 

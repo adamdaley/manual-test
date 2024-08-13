@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Domain\Model\Questionnaire;
 
+use App\Core\Domain\Event\Questionnaire\AnswerCreatedEvent;
+use App\Core\Domain\Event\Questionnaire\AnswerDeletedEvent;
+use App\Core\Domain\Event\Questionnaire\QuestionCreatedEvent;
+use App\Core\Domain\Event\Questionnaire\QuestionDeletedEvent;
+use App\Core\Domain\Event\Questionnaire\QuestionnaireCreatedEvent;
 use App\Core\Domain\Model\Questionnaire\Exception\AnswerNotFoundException;
 use App\Core\Domain\Model\Questionnaire\Exception\MultipleAnswersFoundException;
 use App\Core\Domain\Model\Questionnaire\Exception\QuestionAnsweredMultipleTimesException;
@@ -40,7 +45,7 @@ class Questionnaire extends Aggregate implements JsonSerializable
 
         $this->questions = new ArrayCollection();
 
-        // todo record event
+        $this->raise(new QuestionnaireCreatedEvent($this->id, $this->productCategoryId, $this->title));
     }
 
     /**
@@ -64,7 +69,7 @@ class Questionnaire extends Aggregate implements JsonSerializable
     {
         $question = $this->questions[] = new Question($this, $title);
 
-        // todo record event
+        $this->raise(new QuestionCreatedEvent($question->getId(), $this->id, $question->title));
 
         return $question;
     }
@@ -78,7 +83,7 @@ class Questionnaire extends Aggregate implements JsonSerializable
 
         $this->questions->removeElement($question);
 
-        // todo record event
+        $this->raise(new QuestionDeletedEvent($question->getId(), $this->id));
     }
 
     /**
@@ -96,7 +101,16 @@ class Questionnaire extends Aggregate implements JsonSerializable
 
         $answer = $question->addAnswer($title, $nextQuestionId, $productIdRestrictions);
 
-        // todo record event
+        $this->raise(
+            new AnswerCreatedEvent(
+                $answer->getId(),
+                $this->id,
+                $question->getId(),
+                $answer->title,
+                $answer->getNextQuestionId(),
+                $answer->getProductIdRestrictions(),
+            ),
+        );
 
         return $answer;
     }
@@ -111,7 +125,13 @@ class Questionnaire extends Aggregate implements JsonSerializable
 
         $question->removeAnswer($answerId);
 
-        // todo record event
+        $this->raise(
+            new AnswerDeletedEvent(
+                $answerId,
+                $this->id,
+                $question->getId(),
+            ),
+        );
     }
 
     /**

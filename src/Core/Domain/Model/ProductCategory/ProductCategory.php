@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Domain\Model\ProductCategory;
 
+use App\Core\Domain\Event\ProductCategory\ProductCategoryCreatedEvent;
+use App\Core\Domain\Event\ProductCategory\ProductCreatedEvent;
+use App\Core\Domain\Event\ProductCategory\ProductDeletedEvent;
 use App\Core\Domain\Model\ProductCategory\Exception\ProductNotFoundException;
 use App\Shared\Domain\Model\Aggregate;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -33,7 +36,7 @@ class ProductCategory extends Aggregate implements JsonSerializable
 
         $this->products = new ArrayCollection();
 
-        // todo record event
+        $this->raise(new ProductCategoryCreatedEvent($this->id, $this->name));
     }
 
     /**
@@ -57,7 +60,7 @@ class ProductCategory extends Aggregate implements JsonSerializable
     {
         $product = $this->products[] = new Product($this, $name);
 
-        // todo record event
+        $this->raise(new ProductCreatedEvent($product->getId(), $this->id, $product->name));
 
         return $product;
     }
@@ -71,7 +74,7 @@ class ProductCategory extends Aggregate implements JsonSerializable
 
         $this->products->removeElement($product);
 
-        // todo record event
+        $this->raise(new ProductDeletedEvent($product->getId(), $this->id));
     }
 
     /**
