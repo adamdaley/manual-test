@@ -47,16 +47,7 @@ class ProductCategoryController extends AbstractController
         return $this->json($productCategory);
     }
 
-    #[Route('/{id}', name: 'admin_product_category_show', methods: [Request::METHOD_GET])]
-    public function show(UuidV7 $id): JsonResponse
-    {
-        $productCategory = $this->queryBus->query(new GetProductCategoryQuery($id));
-
-        return $this->json($productCategory);
-    }
-
-//    #[Route('/{id}', name: 'admin_product_category_delete', methods: [Request::METHOD_DELETE])]
-    #[Route('/{id}/delete', name: 'admin_product_category_delete', methods: [Request::METHOD_GET])]
+    #[Route('/{id}', name: 'admin_product_category_delete', methods: [Request::METHOD_DELETE])]
     public function delete(UuidV7 $id): JsonResponse
     {
         $this->commandBus->command(new DeleteProductCategoryCommand($id));
