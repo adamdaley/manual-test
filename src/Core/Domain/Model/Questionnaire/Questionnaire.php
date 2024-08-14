@@ -33,7 +33,7 @@ class Questionnaire extends Aggregate implements JsonSerializable
 
     public function __construct(
         #[Mapping\Column(type: UuidType::NAME)]
-        public readonly UuidV7 $productCategoryId, // todo then load in app layer and also query for in controller
+        public readonly UuidV7 $productCategoryId,
         #[Mapping\Column(type: Types::STRING)]
         public readonly string $title,
     ) {
@@ -177,7 +177,7 @@ class Questionnaire extends Aggregate implements JsonSerializable
         return [
             'id' => $this->id,
             'name' => $this->title,
-            'productCategoryId' => $this->productCategoryId, // todo need to make sure controller is returning product category as well
+            'productCategoryId' => $this->productCategoryId,
             'questions' => $this->questions->map(fn(Question $question) => $question->jsonSerialize())->toArray(),
         ];
     }

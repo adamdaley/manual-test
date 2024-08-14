@@ -365,6 +365,7 @@ final class QuestionnaireTest extends TestCase
 
         // ACT & ASSERT
 
+        // todo change this test to use a data provider
         // q1 - a2
         $result = $subject->getProductIdRestrictionsFromAnswerIds([$question1Answer2->getId()]);
         $this->assertEquals([$sildenafil50Id, $sildenafil100Id, $tadalafil10Id, $tadalafil20Id], $result);
